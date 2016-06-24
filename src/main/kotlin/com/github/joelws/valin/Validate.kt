@@ -38,7 +38,7 @@ fun <K, V> validateTarget(key: K, predicate: Function1<V, Boolean>, error: Strin
 
 }
 
-fun <K> mergeErrors(errorMaps: List<Map<K, String>>) = errorMaps.reduce { map1, map2 -> map1 + map2 }
+fun <K> mergeErrors(errorMaps: List<Map<K, String>>) = errorMaps.reduce { map1, map2 -> map2 + map1 }
 
 fun <K, V> validate(valueMap: Map<K, V>, validations: List<Triple<K, Function1<V, Boolean>, String>>) =
         mergeErrors(validations.map { validate -> validateTarget(validate.first, validate.second, validate.third) }.mapNotNull { f -> f(valueMap) })
