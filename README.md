@@ -7,9 +7,9 @@ Contains the map extension function `Validate.kt/Map<K, V>.validate`. It uses th
 syntax:
 
     map.validate {
-    validate { Triple(key, Function1, errorString }
-    validate { Triple(key, Function1, errorString }
-    validate { Triple(key, Function1, errorString }
+    validate { Triple(key, Function1, errorString) }
+    validate { Triple(key, Function1, errorString) }
+    validate { Triple(key, Function1, errorString) }
     ....
     }
 
@@ -30,7 +30,7 @@ For example:
     val map = mapOf("name" to "Bob")
     
     map.validate {
-      validate { Triple("name", { x: String -> x == "Joel" }, "Name must be Joel" }
+      validate { Triple("name", { x: String -> x == "Joel" }, "Name must be Joel") }
       }
 
     => {name=("Name must be Joel")}
