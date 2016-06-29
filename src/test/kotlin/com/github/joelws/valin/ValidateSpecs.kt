@@ -25,13 +25,13 @@ class ValidateSpecs : Spek({
             val result = createValidation(email = "example,@example.com", password = "abcdefgh")
 
             it("should return map consisting of errors") {
-                assertEquals(mapOf("email" to "Email address is invalid", "password" to "Password must contain at least 1 Uppercase character"), result)
+                assertEquals(mapOf("email" to listOf("Email address is invalid"), "password" to listOf("Password must contain at least 1 Uppercase character")), result)
             }
             on("putting uppercase in password but reducing to sub 8 characters") {
                 val nextResult = createValidation(email = "example,@example.com", password = "abCdefg")
 
                 it("should return new error and removed old") {
-                    assertEquals(mapOf("email" to "Email address is invalid", "password" to "Password must be at least 8 characters"), nextResult)
+                    assertEquals(mapOf("email" to listOf("Email address is invalid"), "password" to listOf("Password must be at least 8 characters")), nextResult)
                 }
             }
 
@@ -49,9 +49,24 @@ class ValidateSpecs : Spek({
         }
     }
 
+    given("a map") {
+        val map = mapOf("x" to 14)
+
+        on("calling validate") {
+            val result = map.validate {
+                validate { Triple("x", { x: Int -> x > 15 }, "Not greater than 15") }
+                validate { Triple("x", { x: Int -> x > 20 }, "Not greater than 20") }
+            }
+
+            it("should return 2 errors associated with the x key") {
+                assertEquals(mapOf("x" to listOf("Not greater than 15", "Not greater than 20")), result)
+            }
+        }
+    }
+
 })
 
-private fun createValidation(email: String, password: String): Map<String, String> = mapOf("email" to email, "password" to password).validate {
+private fun createValidation(email: String, password: String): Map<String, List<String>> = mapOf("email" to email, "password" to password).validate {
     validate { Triple("email", isValidEmailAddress, "Email address is invalid") }
     validate { Triple("password", { p: String -> p.length >= 8 }, "Password must be at least 8 characters") }
     validate { Triple("password", { p: String -> p.count { it.isUpperCase() } > 0 }, "Password must contain at least 1 Uppercase character") }

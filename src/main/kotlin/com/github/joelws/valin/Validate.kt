@@ -25,26 +25,45 @@ class Validator<K, V>() {
     }
 }
 
-fun <K, V> validateTarget(key: K, predicate: Function1<V, Boolean>, error: String): (Map<K, V>) -> Map<K, String> {
+fun <K, V> validateTarget(key: K, predicate: Function1<V, Boolean>, error: String): (Map<K, V>) -> Map<K, MutableList<String>> {
 
-    return fun(valueMap: Map<K, V>): Map<K, String> {
+    return fun(valueMap: Map<K, V>): Map<K, MutableList<String>> {
         val value = valueMap[key]
 
         val functionResult = value?.let(predicate) ?: false
 
-        return if (functionResult) emptyMap() else mapOf(Pair(key, error))
+        return if (functionResult) emptyMap() else mapOf(Pair(key, mutableListOf(error)))
 
     }
 
 }
 
-fun <K> mergeErrors(errorMaps: List<Map<K, String>>) = errorMaps.reduce { map1, map2 -> map2 + map1 }
+fun <K> mergeErrors(errorMaps: List<Map<K, MutableList<String>>>) = errorMaps.reduce { map1, map2 -> mergeWith(map1, map2) }
 
 fun <K, V> validate(valueMap: Map<K, V>, validations: List<Triple<K, Function1<V, Boolean>, String>>) =
         mergeErrors(validations.map { validate -> validateTarget(validate.first, validate.second, validate.third) }.mapNotNull { f -> f(valueMap) })
 
-inline fun <K, V> Map<K, V>.validate(body: Validator<K, V>.() -> Unit): Map<K, String> {
+inline fun <K, V> Map<K, V>.validate(body: Validator<K, V>.() -> Unit): Map<K, List<String>> {
     val validators = Validator<K, V>()
     validators.body()
     return validate(this, validators.validators)
+}
+
+
+private fun <K> mergeWith(from: Map<K, MutableList<String>>, other: Map<K, MutableList<String>>): Map<K, MutableList<String>> {
+    val result = LinkedHashMap<K, MutableList<String>>().apply {
+        putAll(from)
+    }
+
+    for ((k, v) in other) {
+        val existing = result[k]
+
+        if (existing == null) {
+            result[k] = v
+        } else {
+            result[k]?.addAll(v)
+        }
+    }
+
+    return result
 }

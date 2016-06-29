@@ -18,13 +18,12 @@ is then tested with the predicate function. If the predicate fails, the error
 message is included in the map of errors returned by the `validate` extension function. A
 key may be tested multiple times with different predicates and errors.
 
-If no predicate fails, `emptyMap()` is returned. If at least one predicate fails, the
-first of keys to error is returned:
+If no predicate fails, `emptyMap()` is returned. If at least one predicate fails, a map of keys to error is returned:
 
-    {key1=error1,
-     key2=error2,
+    {key1=listOf(error1),
+     key2=listOf(error2, error3),
      ...
-     keyn=errorn} => this is what toString() returns
+     keyn=listOf(errorn)} => this is what toString() returns
 
 For example:
 
@@ -34,4 +33,4 @@ For example:
       validate { Triple("name", { x: String -> x == "Joel" }, "Name must be Joel" }
       }
 
-    => {name="Name must be Joel"}
+    => {name=("Name must be Joel")}
