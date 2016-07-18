@@ -20,8 +20,8 @@ class Validator<K, V>() {
 
     val validators = ArrayList<Triple<K, Function1<V, Boolean>, String>>()
 
-    inline fun validate(add: Validator<K, V>.() -> Triple<K, Function1<V, Boolean>, String>) {
-        validators.add(add())
+    inline fun validate(validations: Validator<K, V>.() -> Triple<K, Function1<V, Boolean>, String>) {
+        validators.add(validations())
     }
 }
 
