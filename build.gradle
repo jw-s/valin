@@ -1,17 +1,21 @@
 group 'com.github.joelws'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 buildscript {
     ext.kotlin_version = '1.0.2-1'
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7'
     }
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -27,4 +31,35 @@ repositories {
 
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId project.group
+            artifactId 'valin'
+            version project.version
+        }
+    }
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publications = ['MyPublication']
+    pkg {
+        repo = 'maven'
+        name = rootProject.name
+        userOrg = 'jdws'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/JoelW-S/valin.git'
+        version {
+            name = project.version
+            gpg {
+                sign = true
+            }
+
+        }
+    }
 }
