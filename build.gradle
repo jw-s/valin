@@ -33,6 +33,13 @@ sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
 }
 
+task sourcesJar(type: Jar, dependsOn: project.classes) {
+    from sourceSets.main.allSource
+}
+artifacts {
+    archives sourcesJar
+}
+
 publishing {
     publications {
         MyPublication(MavenPublication) {
@@ -40,6 +47,9 @@ publishing {
             groupId project.group
             artifactId 'valin'
             version project.version
+            artifact sourcesJar {
+                classifier = 'sources'
+            }
         }
     }
 }

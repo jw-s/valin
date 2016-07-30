@@ -34,3 +34,30 @@ For example:
       }
 
     => {name=("Name must be Joel")}
+
+## Maven
+
+You must configure your ```pom.xml``` file using JCenter repository
+
+```xml  
+<repository>
+    <id>central</id>
+    <name>bintray</name>
+    <url>http://jcenter.bintray.com</url>
+</repository>
+```
+
+```xml
+<dependency>
+  <groupId>com.github.joelws</groupId>
+  <artifactId>valin</artifactId>
+  <version>1.0</version>
+  <type>pom</type>
+</dependency>
+```
+
+## Gradle
+```repositories {
+        jcenter()
+    }```  
+```compile 'com.github.joelws:valin:1.0'```
