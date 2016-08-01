@@ -1,4 +1,4 @@
-package com.github.joelws.valin
+package com.joelws.valin
 /*
 Copyright 2016 Joel Whittaker-Smith
 
@@ -15,5 +15,3 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 val isValidEmailAddress = { email: String -> email.matches(Regex("(?i)[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"))}
-
-

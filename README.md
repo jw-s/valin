@@ -7,9 +7,9 @@ Contains the map extension function `Validate.kt/Map<K, V>.validate`. It uses th
 syntax:
 
     map.validate {
-    validate { Triple(key, Function1, errorString) }
-    validate { Triple(key, Function1, errorString) }
-    validate { Triple(key, Function1, errorString) }
+    validate (key, errorString) Function1
+    validate (key, errorString) { it == 5 }
+    validate (key, errorString) Function1
     ....
     }
 
@@ -30,7 +30,7 @@ For example:
     val map = mapOf("name" to "Bob")
     
     map.validate {
-      validate { Triple("name", { x: String -> x == "Joel" }, "Name must be Joel") }
+      validate ("name", "Name must be Joel") { x: String -> x == "Joel" }
       }
 
     => {name=("Name must be Joel")}
@@ -49,9 +49,9 @@ You must configure your ```pom.xml``` file using JCenter repository
 
 ```xml
 <dependency>
-  <groupId>com.github.joelws</groupId>
+  <groupId>com.joelws</groupId>
   <artifactId>valin</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -60,4 +60,4 @@ You must configure your ```pom.xml``` file using JCenter repository
 ```repositories {
         jcenter()
     }```  
-```compile 'com.github.joelws:valin:1.0'```
+```compile 'com.joelws:valin:1.1'```

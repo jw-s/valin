@@ -1,4 +1,5 @@
-package com.github.joelws.valin
+package com.joelws.valin
+
 /*
 Copyright 2016 Joel Whittaker-Smith
 
@@ -18,14 +19,14 @@ import java.util.*
 
 class Validator<K, V>() {
 
-    val validators = ArrayList<Triple<K, Function1<V, Boolean>, String>>()
+    val validators = ArrayList<Triple<K, String, Function1<V, Boolean>>>()
 
-    inline fun validate(validations: Validator<K, V>.() -> Triple<K, Function1<V, Boolean>, String>) {
-        validators.add(validations())
+    fun validate(key: K, errorMessage: String, predicate: Function1<V, Boolean>) {
+        validators.add(Triple(key, errorMessage, predicate))
     }
 }
 
-fun <K, V> validateTarget(key: K, predicate: Function1<V, Boolean>, error: String): (Map<K, V>) -> Map<K, MutableList<String>> {
+fun <K, V> validateTarget(key: K, error: String, predicate: Function1<V, Boolean>): (Map<K, V>) -> Map<K, MutableList<String>> {
 
     return fun(valueMap: Map<K, V>): Map<K, MutableList<String>> {
         val value = valueMap[key]
@@ -40,10 +41,10 @@ fun <K, V> validateTarget(key: K, predicate: Function1<V, Boolean>, error: Strin
 
 fun <K> mergeErrors(errorMaps: List<Map<K, MutableList<String>>>) = errorMaps.reduce { map1, map2 -> mergeWith(map1, map2) }
 
-fun <K, V> validate(valueMap: Map<K, V>, validations: List<Triple<K, Function1<V, Boolean>, String>>) =
+fun <K, V> validate(valueMap: Map<K, V>, validations: List<Triple<K, String, Function1<V, Boolean>>>) =
         mergeErrors(validations.map { validate -> validateTarget(validate.first, validate.second, validate.third) }.mapNotNull { f -> f(valueMap) })
 
-inline fun <K, V> Map<K, V>.validate(body: Validator<K, V>.() -> Unit): Map<K, List<String>> {
+fun <K, V> Map<K, V>.validate(body: Validator<K, V>.() -> Unit): Map<K, List<String>> {
     val validators = Validator<K, V>()
     validators.body()
     return validate(this, validators.validators)

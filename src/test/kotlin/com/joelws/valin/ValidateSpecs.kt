@@ -1,4 +1,4 @@
-package com.github.joelws.valin
+package com.joelws.valin
 /*
 Copyright 2016 Joel Whittaker-Smith
 
@@ -41,7 +41,7 @@ class ValidateSpecs : Spek({
         val map = mapOf("x" to 20)
 
         on("calling validate") {
-            val result = map.validate { validate { Triple("x", { x: Int -> x is Number }, "Not a Number") } }
+            val result = map.validate { validate("x", "Not a Number") { x: Int -> x is Number } }
 
             it("should return empty map") {
                 assertEquals(emptyMap(), result)
@@ -54,8 +54,8 @@ class ValidateSpecs : Spek({
 
         on("calling validate") {
             val result = map.validate {
-                validate { Triple("x", { x: Int -> x > 15 }, "Not greater than 15") }
-                validate { Triple("x", { x: Int -> x > 20 }, "Not greater than 20") }
+                validate("x", "Not greater than 15") { x: Int -> x > 15 }
+                validate("x", "Not greater than 20") { x: Int -> x > 20 }
             }
 
             it("should return 2 errors associated with the x key") {
@@ -67,7 +67,7 @@ class ValidateSpecs : Spek({
 })
 
 private fun createValidation(email: String, password: String): Map<String, List<String>> = mapOf("email" to email, "password" to password).validate {
-    validate { Triple("email", isValidEmailAddress, "Email address is invalid") }
-    validate { Triple("password", { p: String -> p.length >= 8 }, "Password must be at least 8 characters") }
-    validate { Triple("password", { p: String -> p.count { it.isUpperCase() } > 0 }, "Password must contain at least 1 Uppercase character") }
+    validate("email", "Email address is invalid") { x: String -> isValidEmailAddress(x) }
+    validate("password", "Password must be at least 8 characters") { p: String -> p.length >= 8 }
+    validate("password", "Password must contain at least 1 Uppercase character") { p: String -> p.count { it.isUpperCase() } > 0 }
 }
