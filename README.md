@@ -52,7 +52,6 @@ You must configure your ```pom.xml``` file using JCenter repository
   <groupId>com.joelws</groupId>
   <artifactId>valin</artifactId>
   <version>1.1</version>
-  <type>pom</type>
 </dependency>
 ```
 
